@@ -1,0 +1,99 @@
+<!-- pages/quiz/quiz.wxml -->
+<view class="quiz-page">
+  <!-- 自定义导航栏 -->
+  <view class="quiz-header">
+    <view class="back-btn" bindtap="goBack">
+      <text>＜</text>
+    </view>
+    <text class="quiz-title">知识检测</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="quiz-content">
+    <!-- 进度条 -->
+    <view class="progress-section" wx:if="{{!showResult && !isLoading}}">
+      <!-- 圆点进度指示器 -->
+      <view class="progress-dots" wx:if="{{!showResult && !isLoading}}">
+        <view class="dots-info">
+          <text class="progress-text">第 {{currentIndex + 1}} / {{totalQuestions}} 题</text>
+          <text class="score-text">得分: {{score}}</text>
+        </view>
+        <view class="dots-container">
+          <view 
+            wx:for="{{questions}}" 
+            wx:key="index"
+            class="dot {{index <= currentIndex ? 'active' : ''}} {{index === currentIndex ? 'current' : ''}}"
+          ></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="loading-wrap" wx:if="{{isLoading}}">
+      <view class="loading-spinner"></view>
+      <text>加载题目中...</text>
+    </view>
+
+    <!-- 答题区域 -->
+    <block wx:if="{{!showResult && !isLoading}}">
+      <view class="question-card">
+        <text class="question-text">{{currentQuestion.question}}</text>
+      </view>
+
+      <view class="options-list">
+        <view 
+          wx:for="{{options}}" 
+          wx:key="index"
+          class="option-item {{selectedOption === item ? 'selected' : ''}} {{isAnswered && item === currentQuestion.answer ? 'correct' : ''}} {{isAnswered && selectedOption === item && item !== currentQuestion.answer ? 'wrong' : ''}}"
+          bindtap="selectOption"
+          data-option="{{item}}"
+        >
+          <view class="option-marker">
+            <text>{{String.fromCharCode(65 + index)}}</text>
+          </view>
+          <text class="option-text">{{item}}</text>
+          <view class="option-status" wx:if="{{isAnswered}}">
+            <text wx:if="{{item === currentQuestion.answer}}">✓</text>
+            <text wx:elif="{{selectedOption === item && item !== currentQuestion.answer}}">✗</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="explanation-card" wx:if="{{isAnswered}}">
+        <text class="explanation-title">{{isCorrect ? '✅ 回答正确' : '❌ 回答错误'}}</text>
+        <text class="explanation-text">{{explanation}}</text>
+      </view>
+
+      <view class="action-buttons">
+        <button 
+          class="submit-btn" 
+          wx:if="{{!isAnswered}}"
+          bindtap="submitAnswer"
+        >提交答案</button>
+        <button 
+          class="next-btn" 
+          wx:if="{{isAnswered}}"
+          bindtap="nextQuestion"
+        >{{currentIndex + 1 >= totalQuestions ? '查看结果' : '下一题'}}</button>
+      </view>
+    </block>
+
+    <!-- 结果区域 -->
+    <view class="result-card" wx:if="{{showResult}}">
+      <view class="result-icon">{{score >= 8 ? '🎉' : score >= 6 ? '👍' : '💪'}}</view>
+      <text class="result-title">答题完成</text>
+      <view class="result-score">
+        <text class="score-number">{{score}}</text>
+        <text class="score-total"> / {{totalQuestions}}</text>
+      </view>
+      <text class="result-desc">
+        {{score >= 8 ? '太棒了！你是六堡茶专家！' : score >= 6 ? '还不错，继续学习！' : '再学习一下六堡茶知识吧~'}}
+      </text>
+      <view class="result-buttons">
+        <button class="restart-btn" bindtap="restartQuiz">再来一次</button>
+        <button class="back-home-btn" bindtap="goBack">返回茶园</button>
+      </view>
+    </view>
+  </view>
+</view>

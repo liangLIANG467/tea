@@ -1,0 +1,86 @@
+<!-- pages/history/history.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="title">
+      <text>📷 我的图库</text>
+      <text class="count">({{imageList.length}}张)</text>
+    </view>
+    <view class="header-buttons">
+      <button bindtap="manualSync" size="mini" type="default" class="sync-btn">刷新</button>
+      <button wx:if="{{imageList.length > 0}}" bindtap="deleteAllImages" size="mini" type="warn" class="clear-btn">清空</button>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{isLoading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{imageList.length === 0}}" class="empty">
+    <view class="empty-icon">📷</view>
+    <text class="empty-text">暂无图片</text>
+    <text class="empty-tip">去诊断页面拍照保存图片吧</text>
+  </view>
+
+  <!-- 图片网格 -->
+  <view wx:else class="image-grid">
+    <view 
+      wx:for="{{imageList}}" 
+      wx:key="id" 
+      class="image-card"
+      data-index="{{index}}"
+    >
+      <!-- 图片 -->
+      <view class="image-wrapper" bindtap="previewImage" data-index="{{index}}">
+        <image 
+          class="image" 
+          src="{{item.path}}" 
+          mode="aspectFill"
+          lazy-load
+        ></image>
+        <!-- 标签 -->
+        <view class="image-tag" wx:if="{{item.disease}}">
+          <text>{{item.disease}}</text>
+        </view>
+      </view>
+      
+      <!-- 图片信息 -->
+      <view class="image-info">
+        <view class="info-row">
+          <text class="info-label">文件名：</text>
+          <text class="info-value">{{item.fileName || '未命名'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.confidence}}">
+          <text class="info-label">置信度：</text>
+          <text class="info-value confidence">{{item.confidence}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">保存时间：</text>
+          <text class="info-value">{{item.saveTime}}</text>
+        </view>
+      </view>
+      
+      <!-- 操作按钮 -->
+      <view class="action-buttons">
+        <button 
+          class="save-btn" 
+          size="mini" 
+          bindtap="saveImageToAlbum" 
+          data-index="{{index}}"
+        >
+          💾 保存
+        </button>
+        <button 
+          class="delete-btn" 
+          size="mini" 
+          type="warn" 
+          bindtap="deleteImage" 
+          data-index="{{index}}"
+        >
+          🗑️ 删除
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

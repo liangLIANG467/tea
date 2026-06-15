@@ -1,0 +1,540 @@
+/**
+ * 病害识别页面样式
+ * 六堡茶AI智能助手
+ */
+
+/* ==================== 全局变量 ==================== */
+page {
+  --bg-color: #F5F0E8;
+  --card-bg: #FFFDF9;
+  --primary-color: #5D4037;
+  --secondary-color: #6B8C42;
+  --light-green: #8BAA6B;
+  --text-primary: #3E2723;
+  --text-secondary: #8D6E63;
+  --text-white: #FFFFFF;
+  --border-color: #E8DDD2;
+  --shadow-card: 0 4rpx 20rpx rgba(93, 64, 55, 0.08);
+  --radius-large: 28rpx;
+  --radius-medium: 20rpx;
+  --radius-small: 16rpx;
+  --radius-circle: 50%;
+  --font-size-xl: 40rpx;
+  --font-size-lg: 34rpx;
+  --font-size-md: 28rpx;
+  --font-size-sm: 26rpx;
+  --font-size-xs: 22rpx;
+}
+
+/* ==================== 页面容器 ==================== */
+.diagnose-page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  padding-bottom: 140rpx;
+}
+
+/* ==================== 导航栏 ==================== */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 140rpx;                    /* 总高度 */
+  background: var(--card-bg);        /* #FFFDF9 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80rpx 32rpx 0;           /* 上 50rpx 把内容下移 */
+  box-sizing: border-box;
+  z-index: 100;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.nav-bar-back {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;                /* 圆形 */
+  background: rgba(0, 0, 0, 0.08); /* 浅灰背景 */
+}
+
+.back-icon {
+  font-size: 32rpx;
+  color: #ffffff;                       /* 黑色箭头 */
+  font-weight: 500;
+}
+
+.nav-bar-title {
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--text-primary);        /* #3E2723 */
+}
+
+.nav-bar-right {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+/* ==================== 步骤指示器 ==================== */
+.steps-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 180rpx 60rpx 60rpx;
+  background-color: transparent;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.step-icon-wrap {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-circle);
+  background-color: #EFE8DF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.step-item.active .step-icon-wrap {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #5A7A2E 100%);
+  box-shadow: 0 6rpx 16rpx rgba(107, 140, 66, 0.25);
+}
+
+.step-item.finish .step-icon-wrap {
+  background-color: var(--secondary-color);
+}
+
+.step-icon {
+  font-size: 32rpx;
+}
+
+.step-check {
+  position: absolute;
+  top: -6rpx;
+  right: -6rpx;
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: var(--radius-circle);
+  background-color: var(--card-bg);
+  color: var(--secondary-color);
+  font-size: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step-title {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.step-item.active .step-title {
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+.step-item.finish .step-title {
+  color: var(--secondary-color);
+}
+
+.step-line {
+  width: 80rpx;
+  height: 3rpx;
+  background-color: #E8DDD2;
+  margin: 0 12rpx 40rpx;
+}
+
+.step-line.active {
+  background-color: var(--secondary-color);
+}
+
+/* ==================== 内容区域 ==================== */
+.content-area {
+  padding: 0 28rpx;
+}
+
+/* ==================== 通用卡片样式 ==================== */
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-large);
+  padding: 32rpx;
+  box-shadow: var(--shadow-card);
+  border: 1rpx solid var(--border-color);
+}
+
+/* ==================== 步骤1：拍照区域 ==================== */
+.step-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.camera-area {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-large);
+  padding: 150rpx 50rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-card);
+  border: 2rpx dashed var(--border-color);
+  transition: all 0.2s ease;
+  min-height: 300rpx;
+}
+
+.camera-area:active {
+  transform: scale(0.98);
+  background-color: #F9F5EE;
+}
+
+.camera-icon-wrap {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: var(--radius-circle);
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #5A7A2E 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28rpx;
+  box-shadow: 0 8rpx 20rpx rgba(107, 140, 66, 0.25);
+}
+
+.camera-icon {
+  font-size: 70rpx;
+}
+
+.camera-hint {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 12rpx;
+}
+
+.camera-tip {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ==================== 提示卡片 ==================== */
+.tips-card {
+  margin-top: 28rpx;
+}
+
+.tips-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.tips-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.tips-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tips-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.tip-item {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 2;
+  padding-left: 8rpx;
+}
+
+/* ==================== 步骤2：分析中 ==================== */
+.analyzing-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.analyzing-image-wrap {
+  width: 100%;
+  height: 720rpx;
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  position: relative;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-card);
+  border: 1rpx solid var(--border-color);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+}
+
+.analyzing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(62, 39, 35, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.analyzing-spinner {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: var(--radius-circle);
+  background-color: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.analyzing-spinner text {
+  font-size: 48rpx;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+.analyzing-text {
+  font-size: var(--font-size-md);
+  color: var(--text-white);
+  font-weight: 500;
+}
+
+.analyzing-hint {
+  display: flex;
+  align-items: center;
+  margin-top: 28rpx;
+  padding: 20rpx 28rpx;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-medium);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  border: 1rpx solid var(--border-color);
+  box-shadow: var(--shadow-card);
+}
+
+.hint-icon {
+  margin-right: 12rpx;
+  font-size: 28rpx;
+}
+
+/* ==================== 步骤3：识别结果 ==================== */
+.result-area {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.result-image-card {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-large);
+}
+
+.result-image {
+  width: 100%;
+  height: 320rpx;
+  border-radius: var(--radius-large) var(--radius-large) 0 0;
+}
+
+.result-image-actions {
+  position: absolute;
+  bottom: 20rpx;
+  right: 20rpx;
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background-color: rgba(255, 253, 249, 0.95);
+  border-radius: 60rpx;
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+  gap: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+  background-color: var(--card-bg);
+}
+
+.action-btn text:first-child {
+  font-size: 24rpx;
+}
+
+/* ==================== 病害信息 ==================== */
+.disease-info {
+  padding: 32rpx;
+}
+
+.disease-header {
+  display: flex;
+  align-items: flex-start;
+}
+
+.disease-icon {
+  font-size: 52rpx;
+  margin-right: 20rpx;
+}
+
+.disease-title-wrap {
+  flex: 1;
+}
+
+.disease-name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: 1rpx;
+}
+
+.confidence-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 12rpx;
+  padding: 6rpx 20rpx;
+  background-color: rgba(107, 140, 66, 0.12);
+  border-radius: 30rpx;
+  font-size: var(--font-size-xs);
+  color: var(--secondary-color);
+}
+
+.confidence-value {
+  font-weight: 700;
+  margin-left: 8rpx;
+}
+
+.confidence-bar-wrap {
+  margin-top: 28rpx;
+}
+
+.confidence-bar {
+  height: 10rpx;
+  background-color: #E8DDD2;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--secondary-color) 0%, var(--light-green) 100%);
+  border-radius: 10rpx;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== 防治建议 ==================== */
+.treatment-card {
+  padding: 32rpx;
+}
+
+.treatment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.treatment-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+
+.treatment-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.treatment-content {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+  line-height: 1.85;
+  display: block;
+}
+
+/* ==================== 操作按钮 ==================== */
+.result-actions {
+  margin-top: 8rpx;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  height: 96rpx;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #5A7A2E 100%);
+  color: var(--text-white);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  border-radius: 60rpx;
+  border: none;
+  box-shadow: 0 8rpx 20rpx rgba(107, 140, 66, 0.3);
+}
+
+.btn:active {
+  transform: scale(0.97);
+  opacity: 0.95;
+}
+
+.btn-primary text:first-child {
+  font-size: 28rpx;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* ==================== 安全区 ==================== */
+.safe-area-bottom {
+  height: 60rpx;
+}
+

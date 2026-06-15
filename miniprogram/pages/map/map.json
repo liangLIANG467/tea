@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "地图导览",
+  "navigationStyle": "custom",
+  "usingComponents": {},
+  "enablePullDownRefresh": false,
+  "disableScroll": false,
+  "navigationBarTextStyle": "black"
+}

@@ -1,0 +1,28 @@
+<!-- pages/detail/detail.wxml -->
+<view class="detail-page" wx:if="{{detail}}">
+  <!-- 文章封面图 -->
+  <image class="cover-image" src="{{detail.coverImage}}" mode="aspectFill"></image>
+  
+  <!-- 标题区域 -->
+  <view class="title-section">
+    <text class="article-title">{{detail.title}}</text>
+    <view class="type-tag">{{detail.type}}</view>
+  </view>
+  
+  <!-- 正文内容 -->
+  <view class="content-section">
+    <text class="article-content">{{detail.content}}</text>
+  </view>
+  
+  <!-- 底部操作栏 -->
+  <view class="action-bar">
+    <!-- 分享按钮（点击弹出选择菜单） -->
+    <button class="share-main-btn" bindtap="showShareMenu" hover-class="btn-hover">
+      <text class="action-text">分享文章</text>
+    </button>
+  </view>
+</view>
+<!-- 加载中 -->
+<view class="loading-wrap" wx:else>
+  <text>加载中...</text>
+</view>

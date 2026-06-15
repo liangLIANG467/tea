@@ -1,0 +1,155 @@
+<!--
+  地图导览页面
+  六堡茶AI智能助手
+-->
+
+<view class="map-page">
+  <!-- 自定义导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-bar-back" bindtap="navigateBack">
+      <text class="back-icon">＜</text>
+    </view>
+    <text class="nav-bar-title">地图导览</text>
+    <view class="nav-bar-right">
+      <view class="relocate-btn" bindtap="relocateToUser">
+        <text class="relocate-icon">📍</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input 
+        class="search-input" 
+        type="text" 
+        placeholder="搜索茶园、景点..." 
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="doSearch"
+      />
+      <view wx:if="{{searchKeyword}}" class="clear-btn" bindtap="clearSearch">
+        <text>✕</text>
+      </view>
+    </view>
+    <button class="search-btn" bindtap="doSearch">搜索</button>
+  </view>
+
+  <!-- 地图组件 -->
+  <map
+    id="map"
+    class="map-container"
+    latitude="{{centerLatitude}}"
+    longitude="{{centerLongitude}}"
+    scale="{{scale}}"
+    markers="{{markers}}"
+    show-location="{{true}}"
+    enable-zoom="{{true}}"
+    enable-scroll="{{true}}"
+    enable-rotate="{{false}}"
+    bindmarkertap="onMarkerTap"
+    bindtap="onMapTap"
+  >
+    <!-- 加载中提示 -->
+    <cover-view wx:if="{{isLoading}}" class="map-loading">
+      <cover-view class="loading-content">
+        <cover-view class="loading-spinner"></cover-view>
+        <cover-view class="loading-text">定位中...</cover-view>
+      </cover-view>
+    </cover-view>
+  </map>
+
+  <!-- 底部地点列表 -->
+  <view class="places-list">
+    <view class="places-header">
+      <text class="places-title">附近茶园</text>
+      <text class="places-count">{{places.length}}个地点</text>
+    </view>
+    <scroll-view class="places-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+      <view class="places-scroll-inner">
+        <view 
+          wx:for="{{places}}" 
+          wx:key="id"
+          class="place-card {{selectedPlace && selectedPlace.id === item.id ? 'active' : ''}}"
+          bindtap="selectPlace"
+          data-id="{{item.id}}"
+        >
+          <view class="place-icon">{{item.icon}}</view>
+          <view class="place-info">
+            <text class="place-name">{{item.name}}</text>
+            <text class="place-distance">{{item.distance}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部信息卡片（弹窗） -->
+  <view class="info-card-mask" wx:if="{{showInfoCard}}" bindtap="hideInfoCard">
+    <view class="info-card" catchtap="stopPropagation">
+      <!-- 卡片头部 -->
+      <view class="card-header">
+        <view class="card-header-left">
+          <text class="card-icon">{{selectedPlace.icon}}</text>
+          <text class="card-title">{{selectedPlace.name}}</text>
+        </view>
+        <view class="card-close" bindtap="hideInfoCard">
+          <text>✕</text>
+        </view>
+      </view>
+
+      <!-- 距离标签 -->
+      <view class="card-distance-tag">
+        <text>📏 距离 {{selectedPlace.distance}}</text>
+      </view>
+
+      <!-- 描述 -->
+      <view class="card-description">
+        <text>{{selectedPlace.description}}</text>
+      </view>
+
+      <!-- 特色标签 -->
+      <view class="card-features">
+        <text class="features-label">✨ 特色：</text>
+        <view class="features-tags">
+          <text wx:for="{{selectedPlace.features}}" wx:key="index" class="feature-tag">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 地址信息 -->
+      <view class="card-address" wx:if="{{selectedPlace.address}}">
+        <text class="address-icon">📍</text>
+        <text class="address-text">{{selectedPlace.address}}</text>
+      </view>
+
+      <!-- 营业时间 -->
+      <view class="card-hours" wx:if="{{selectedPlace.openingHours}}">
+        <text class="hours-icon">🕐</text>
+        <text class="hours-text">{{selectedPlace.openingHours}}</text>
+      </view>
+
+      <!-- 联系方式 -->
+      <view class="card-phone" wx:if="{{selectedPlace.phone}}">
+        <text class="phone-icon">📞</text>
+        <text class="phone-text">{{selectedPlace.phone}}</text>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="card-actions">
+        <button class="action-btn detail-btn" bindtap="viewDetail">
+          <text>📖</text>
+          <text>查看详情</text>
+        </button>
+        <button class="action-btn nav-btn" bindtap="startNavigation">
+          <text>🧭</text>
+          <text>开始导航</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部占位 -->
+  <view class="safe-area-bottom"></view>
+</view>

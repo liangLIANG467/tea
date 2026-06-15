@@ -1,0 +1,154 @@
+<!--
+  AI茶博士问答页面
+  六堡茶AI智能助手
+-->
+<view class="chat-page">
+  <!-- 自定义导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-bar-left">
+      <view class="nav-bar-back" bindtap="navigateBack">
+        <text class="back-icon">＜</text>
+      </view>
+    </view>
+    <text class="nav-bar-title">AI茶博士</text>
+    <view class="nav-bar-right">
+      <view class="new-chat-btn" bindtap="createNewSession">
+        <text class="new-chat-icon">✚</text>
+      </view>
+      <view class="history-btn" bindtap="toggleSessionList">
+        <text class="history-icon">☰</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 侧边栏会话列表 -->
+  <view class="session-mask" wx:if="{{showSessionList}}" bindtap="closeSessionList">
+    <view class="session-sidebar" catchtap="stopPropagation">
+      <view class="session-header">
+        <text class="session-header-title">历史对话</text>
+        <view class="clear-all-btn" bindtap="clearAllSessions">
+          <text>清空全部</text>
+        </view>
+      </view>
+      <scroll-view class="session-list" scroll-y="{{true}}">
+        <view 
+          wx:for="{{sessionList}}" 
+          wx:key="id"
+          class="session-item {{currentSessionId === item.id ? 'active' : ''}}"
+          bindtap="switchSession"
+          data-id="{{item.id}}"
+        >
+          <view class="session-info">
+            <text class="session-title">{{item.title || '新对话'}}</text>
+            <text class="session-time">{{item.updateTime}}</text>
+          </view>
+          <view class="session-delete" catchtap="deleteSession" data-id="{{item.id}}">
+            <text>🗑️</text>
+          </view>
+        </view>
+        <view wx:if="{{sessionList.length === 0}}" class="session-empty">
+          <text>暂无历史对话</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 聊天内容区域 -->
+  <scroll-view 
+    class="chat-content" 
+    scroll-y="{{true}}" 
+    scroll-into-view="{{scrollToView}}"
+    scroll-with-animation="{{true}}"
+    enhanced="{{true}}"
+    enable-back-to-top="{{true}}"
+  >
+    <!-- 消息列表 -->
+    <view wx:for="{{messageList}}" wx:key="id" class="message-item {{item.role === 'user' ? 'user-message' : 'assistant-message'}}">
+      <!-- 头像 -->
+      <view class="message-avatar">
+        <!-- 用户：显示默认头像图 -->
+        <image wx:if="{{item.role === 'user'}}" class="avatar-img" src="/miniprogram/images/default_avatar.jpg" mode="aspectFill"></image>
+        <!-- AI：显示 🍃 -->
+        <view wx:else class="ai-avatar">
+          <text>🍃</text>
+        </view>
+      </view>
+      
+      <!-- 气泡 -->
+      <view class="message-bubble">
+        <view class="message-content">
+          <text user-select="{{true}}">{{item.content}}</text>
+        </view>
+        <text class="message-time">{{item.time}}</text>
+      </view>
+    </view>
+
+    <!-- 加载中状态 -->
+    <view class="loading-message" wx:if="{{isLoading}}">
+      <view class="message-avatar">
+        <view class="ai-avatar">
+          <text>🍃</text>
+        </view>
+      </view>
+      <view class="message-bubble loading-bubble">
+        <view class="dot-typing">
+          <view class="dot"></view>
+          <view class="dot"></view>
+          <view class="dot"></view>
+        </view>
+        <text class="loading-text">AI正在思考中...</text>
+      </view>
+    </view>
+
+    <!-- 底部占位 -->
+    <view class="chat-bottom-space" id="bottom-space"></view>
+  </scroll-view>
+
+  <!-- 推荐问题区域 -->
+  <view class="suggest-area" wx:if="{{messageList.length <= 2 && !isLoading}}">
+    <view class="suggest-title">
+      <text class="suggest-icon">💡</text>
+      <text>您可以这样问我：</text>
+    </view>
+    <scroll-view class="suggest-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+      <view class="suggest-list">
+        <view 
+          wx:for="{{suggestQuestions}}" 
+          wx:key="index"
+          class="suggest-item"
+          bindtap="sendSuggest"
+          data-text="{{item}}"
+        >
+          <text class="suggest-mark">✨</text>
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 输入区域 -->
+  <view class="input-area">
+    <view class="input-wrap">
+      <input 
+        class="chat-input" 
+        type="text" 
+        placeholder="输入您的问题..." 
+        value="{{inputText}}"
+        bindinput="onInputChange"
+        bindconfirm="sendMessage"
+        confirm-type="send"
+        disabled="{{isLoading}}"
+      />
+      <button 
+        class="send-btn {{!inputText ? 'disabled' : ''}}" 
+        bindtap="sendMessage"
+        disabled="{{!inputText || isLoading}}"
+      >
+        <text>发送</text>
+      </button>
+    </view>
+    <view class="input-hint">
+      <text>AI茶博士 · 懂茶更懂你</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,92 @@
+<!-- 首页 - 六堡茶AI智能助手 -->
+  <!-- 轮播图区域 -->
+  <swiper class="swiper" indicator-dots="true" autoplay="true" interval="3000" circular="true">
+    <swiper-item>
+      <image class="swiper-image" src="/miniprogram/images/s.png" mode="aspectFill"></image>
+    </swiper-item>
+    <swiper-item>
+      <image class="swiper-image" src="/miniprogram/images/s1.png" mode="aspectFill"></image>
+    </swiper-item>
+    <swiper-item>
+      <image class="swiper-image" src="/miniprogram/images/s3.png" mode="aspectFill"></image>
+    </swiper-item>
+    <swiper-item>
+      <image class="swiper-image" src="/miniprogram/images/health.png" mode="aspectFill"></image>
+    </swiper-item>
+    <swiper-item>
+      <image class="swiper-image" src="/miniprogram/images/banner1.png" mode="aspectFill"></image>
+    </swiper-item>
+    <swiper-item>
+      <image class="swiper-image" src="/miniprogram/images/banner2.png" mode="aspectFill"></image>
+    </swiper-item>
+    <swiper-item>
+      <image class="swiper-image" src="/miniprogram/images/banner3.png" mode="aspectFill"></image>
+    </swiper-item>
+  </swiper>
+
+  <!-- 功能入口网格 2x2 -->
+  <view class="function-grid">
+    <view class="grid-item" bindtap="navigateToChat">
+      <view class="item-icon">🤖</view>
+      <text class="item-title">AI茶博士问答</text>
+    </view>
+    <view class="grid-item" bindtap="navigateToMap">
+      <view class="item-icon">🗺️</view>
+      <text class="item-title">地图导览</text>
+    </view>
+    <view class="grid-item" bindtap="navigateToDiagnose">
+      <view class="item-icon">🔍</view>
+      <text class="item-title">病害识别</text>
+    </view>
+    <view class="grid-item" bindtap="navigateToGarden">
+      <view class="item-icon">🌱</view>
+      <text class="item-title">我的茶园</text>
+    </view>
+  </view>
+
+  <!-- pages/index/index.wxml -->
+<!-- 今日茶知识卡片 -->
+<view class="knowledge-card">
+  <view class="knowledge-header">
+    <view class="knowledge-title">
+      <text class="title-icon">📖</text>
+      <text>今日茶知识</text>
+    </view>
+    <view class="knowledge-actions">
+      <!-- 收藏按钮 -->
+      <view class="collect-btn {{todayKnowledge.isCollected ? 'collected' : ''}}" bindtap="toggleCollectKnowledge">
+        <text class="collect-icon">{{todayKnowledge.isCollected ? '❤️' : '🤍'}}</text>
+        <text class="collect-text">{{todayKnowledge.isCollected ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="knowledge-content">
+    <text>{{todayKnowledge.content}}</text>
+  </view>
+  <view class="knowledge-source">
+    <text>{{todayKnowledge.source}}</text>
+  </view>
+</view>
+
+ <!-- 文化文章区域 -->
+ <view class="section-title">
+    <text>📖 六堡茶文化</text>
+    <text class="more-link" bindtap="goToCulture">更多 ></text>
+  </view>
+
+  <!-- 文章卡片列表 -->
+  <block wx:if="{{articles.length > 0}}">
+    <view class="article-card" wx:for="{{articles}}" wx:key="id" bindtap="goToArticleDetail" data-id="{{item.id}}">
+      <view class="article-header">
+        <image class="article-icon" src="{{item.coverImage}}" mode="aspectFill"></image>
+        <view class="article-info">
+          <text class="article-title">{{item.title}}</text>
+          <text class="article-type">{{item.type}}</text>
+        </view>
+      </view>
+      <text class="article-desc">{{item.content}}</text>
+    </view>
+  </block>
+
+  <!-- 底部留白 -->
+  <view class="bottom-space"></view>

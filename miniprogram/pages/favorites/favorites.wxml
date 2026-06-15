@@ -1,0 +1,74 @@
+<!-- pages/favorites/favorites.wxml -->
+<view class="container">
+
+  <!-- 标签栏 -->
+  <view class="tabs">
+    <view 
+      wx:for="{{tabs}}" 
+      wx:key="id"
+      class="tab-item {{activeTab === item.id ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-id="{{item.id}}"
+    >
+      {{item.name}}
+    </view>
+  </view>
+
+  <!-- 收藏列表 -->
+  <scroll-view class="favorites-list" scroll-y enhanced show-scrollbar="{{false}}">
+    <block wx:for="{{filteredFavorites}}" wx:key="id">
+      <view class="favorite-item">
+        <!-- 点击查看详情 -->
+        <view class="item-content" bindtap="viewDetail" data-item="{{item}}">
+          <!-- 封面图片（仅文章显示） -->
+          <view class="item-cover" wx:if="{{item.type === 'article'}}">
+            <image 
+              wx:if="{{item.coverImageUrl}}" 
+              class="cover-image" 
+              src="{{item.coverImageUrl}}" 
+              mode="aspectFill"
+              binderror="onImageError"
+              data-index="{{index}}"
+            ></image>
+            <view wx:else class="cover-placeholder">
+              <text>📄</text>
+            </view>
+          </view>
+          
+          <!-- 知识图标 -->
+          <view class="item-icon" wx:else>
+            <text>💡</text>
+          </view>
+          
+          <!-- 信息区域 -->
+          <view class="item-info">
+            <text class="item-title">{{item.title || '茶知识'}}</text>
+            <text class="item-time">{{item.collectTime || '未知时间'}}</text>
+          </view>
+        </view>
+        
+        <!-- 删除按钮 -->
+        <view class="item-delete" bindtap="deleteFavoriteByIndex" data-item="{{item}}">
+          <text>🗑️</text>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 空状态 -->
+    <view wx:if="{{filteredFavorites.length === 0 && !isLoading}}" class="empty">
+      <text class="empty-icon">⭐</text>
+      <text class="empty-text">暂无收藏</text>
+      <text class="empty-tip">在文章详情页点击❤️即可收藏</text>
+    </view>
+    
+    <!-- 加载中 -->
+    <view wx:if="{{isLoading}}" class="loading">
+      <text>加载中...</text>
+    </view>
+  </scroll-view>
+
+  <!-- 清空按钮 -->
+  <view class="clear-btn" wx:if="{{favorites.length > 0}}" bindtap="clearAllFavorites">
+    <text>清空全部收藏</text>
+  </view>
+</view>

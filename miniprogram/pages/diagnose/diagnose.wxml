@@ -1,0 +1,143 @@
+<!--
+  病害识别页面
+  六堡茶AI智能助手
+-->
+<view class="diagnose-page">
+  <!-- 自定义导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-bar-back" bindtap="navigateBack">
+      <text class="back-icon">＜</text>
+    </view>
+    <text class="nav-bar-title">病害识别</text>
+    <view class="nav-bar-right"></view>
+  </view>
+
+  <!-- 步骤指示器 -->
+  <view class="steps-container">
+    <block wx:for="{{steps}}" wx:key="id">
+      <view class="step-item {{item.status}}">
+        <view class="step-icon-wrap">
+          <text class="step-icon">{{item.icon}}</text>
+          <view wx:if="{{item.status === 'finish'}}" class="step-check">✓</view>
+        </view>
+        <text class="step-title">{{item.title}}</text>
+      </view>
+      <view wx:if="{{index < steps.length - 1}}" class="step-line {{item.status === 'finish' ? 'active' : ''}}"></view>
+    </block>
+  </view>
+
+  <!-- 主内容区域 -->
+  <view class="content-area">
+    <!-- 步骤1：拍照区域 -->
+    <view wx:if="{{currentStep === 1}}" class="step-content">
+      <view class="camera-area" bindtap="chooseImage">
+        <view class="camera-icon-wrap">
+          <text class="camera-icon">📷</text>
+        </view>
+        <text class="camera-hint">点击拍摄叶片</text>
+        <text class="camera-tip">请拍摄清晰的叶片照片，以便AI准确识别</text>
+      </view>
+      
+      <view class="tips-card card">
+        <view class="tips-header">
+          <text class="tips-icon">💡</text>
+          <text class="tips-title">拍摄建议</text>
+        </view>
+        <view class="tips-list">
+          <text class="tip-item">• 选择光线充足的环境</text>
+          <text class="tip-item">• 确保叶片完整且清晰</text>
+          <text class="tip-item">• 尽量拍摄有病害症状的部位</text>
+          <text class="tip-item">• 背景尽量简洁</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 步骤2：分析中 -->
+    <view wx:if="{{currentStep === 2}}" class="step-content">
+      <view class="analyzing-area">
+        <view class="analyzing-image-wrap">
+          <image 
+            class="preview-image" 
+            src="{{selectedImagePath}}" 
+            mode="aspectFill"
+          />
+          <view class="analyzing-overlay">
+            <view class="analyzing-spinner">
+              <text>🔬</text>
+            </view>
+            <text class="analyzing-text">正在分析中...</text>
+          </view>
+        </view>
+        
+        <view class="analyzing-hint">
+          <text class="hint-icon">⏳</text>
+          <text>正在识别病害类型，请稍候</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 步骤3：识别结果 -->
+    <view wx:if="{{currentStep === 3 && diagnoseResult}}" class="step-content">
+      <view class="result-area">
+        <!-- 图片预览 -->
+        <view class="result-image-card card">
+          <image 
+            class="result-image" 
+            src="{{selectedImagePath}}" 
+            mode="aspectFill"
+          />
+          <view class="result-image-actions">
+            <view class="action-btn" bindtap="resetDiagnose">
+              <text>🔄</text>
+              <text>重新拍摄</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 病害信息 -->
+        <view class="disease-info card">
+          <view class="disease-header">
+            <text class="disease-icon">🔍</text>
+            <view class="disease-title-wrap">
+              <text class="disease-name">{{diagnoseResult.disease}}</text>
+              <view class="confidence-tag">
+                <text>置信度</text>
+                <text class="confidence-value">{{diagnoseResult.confidencePercent}}</text>
+              </view>
+            </view>
+          </view>
+          
+          <!-- 置信度进度条 -->
+          <view class="confidence-bar-wrap">
+            <view class="confidence-bar">
+              <view 
+                class="confidence-fill" 
+                style="width: {{diagnoseResult.confidence * 100}}"
+              ></view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 防治建议 -->
+        <view class="treatment-card card">
+          <view class="treatment-header">
+            <text class="treatment-icon">💊</text>
+            <text class="treatment-title">防治建议</text>
+          </view>
+          <text class="treatment-content">{{diagnoseResult.treatment}}</text>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="result-actions">
+          <button class="btn btn-primary btn-full" bindtap="saveResult">
+            <text>💾</text>
+            <text>保存结果</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部占位 -->
+  <view class="safe-area-bottom"></view>
+</view>

@@ -1,0 +1,154 @@
+<!--
+  我的茶园页面
+  六堡茶AI智能助手
+-->
+<view class="garden-page">
+  <!-- 自定义导航栏 - 高度增加一倍 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px; height: {{navBarContentHeight}}px;">
+    <view class="nav-bar-back" bindtap="navigateBack">
+      <text class="back-icon">＜</text>
+    </view>
+    <text class="nav-bar-title">我的茶园</text>
+    <view class="nav-bar-right">
+      <view class="more-btn" bindtap="showMore">
+        <text class="more-icon">⋯</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 内容区域 - 通过 margin-top 下移，避开增高后的导航栏 -->
+  <scroll-view 
+    class="garden-content" 
+    scroll-y="{{true}}" 
+    enhanced="{{true}}" 
+    enable-back-to-top="{{true}}"
+    show-scrollbar="{{false}}"
+    style="margin-top: {{navBarTotalHeight}}px;"
+  >
+    <!-- 外层容器 - 左右留白 -->
+    <view class="container">
+      
+      <!-- 统计卡片网格 -->
+      <view class="stats-grid">
+        <view class="stat-card">
+          <view class="stat-icon">🌱</view>
+          <text class="stat-label">适宜种植</text>
+          <text class="stat-value">春茶期</text>
+        </view>
+        <view class="stat-card">
+          <view class="stat-icon">💚</view>
+          <text class="stat-label">健康评分</text>
+          <view class="stat-number-wrap">
+            <text class="stat-number">92</text>
+            <text class="stat-unit">分</text>
+          </view>
+        </view>
+        <view class="stat-card">
+          <view class="stat-icon">📦</view>
+          <text class="stat-label">已收获</text>
+          <view class="stat-number-wrap">
+            <text class="stat-number">15</text>
+            <text class="stat-unit">批</text>
+          </view>
+        </view>
+        <view class="stat-card" bindtap="goToQuiz">
+          <view class="stat-icon">✏️</view>
+          <text class="stat-label">知识检测</text>
+          <view class="stat-number-wrap">
+            <text class="stat-number">10</text>
+            <text class="stat-unit">题</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 生长进度 -->
+      <view class="progress-card">
+        <view class="progress-header">
+          <text class="progress-title">生长进度</text>
+          <text class="progress-percent">78%</text>
+        </view>
+        <view class="progress-bar-wrap">
+          <view class="progress-bar" style="width: 78%;"></view>
+        </view>
+        <view class="progress-stages">
+          <view class="stage-item">
+            <view class="stage-dot active"></view>
+            <text class="stage-name active">萌芽</text>
+          </view>
+          <view class="stage-line active"></view>
+          <view class="stage-item">
+            <view class="stage-dot active"></view>
+            <text class="stage-name active">展叶</text>
+          </view>
+          <view class="stage-line active"></view>
+          <view class="stage-item">
+            <view class="stage-dot active"></view>
+            <text class="stage-name active">生长</text>
+          </view>
+          <view class="stage-line"></view>
+          <view class="stage-item">
+            <view class="stage-dot"></view>
+            <text class="stage-name">采摘</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- AI巡检按钮 -->
+      <view class="inspect-btn" bindtap="startInspect">
+        <view class="inspect-icon">🤖</view>
+        <view class="inspect-text">
+          <text class="inspect-title">一键巡检 · AI分析茶园状态</text>
+          <text class="inspect-desc">点击开始智能巡检</text>
+        </view>
+        <view class="inspect-arrow">›</view>
+      </view>
+
+      <!-- 今日任务 -->
+      <view class="task-card">
+        <view class="task-header">
+          <text class="task-title">📋 今日任务</text>
+          <text class="task-status">✓ 已完成</text>
+        </view>
+        <view class="task-content">
+          <view class="task-checkbox checked">
+            <text>✓</text>
+          </view>
+          <text class="task-text">巡视茶园并记录生长情况</text>
+        </view>
+      </view>
+
+      <!-- 最新巡检报告 -->
+      <view class="report-card">
+        <view class="report-header">
+          <text class="report-title">📊 最新巡检报告</text>
+          <view class="report-expand" bindtap="expandReport">
+            <text>{{reportExpanded ? '收起' : '展开'}}</text>
+            <text class="expand-icon">{{reportExpanded ? '▲' : '▼'}}</text>
+          </view>
+        </view>
+        <view class="report-content {{reportExpanded ? 'expanded' : ''}}">
+          <text class="report-text">茶园健康茶园整体状态良好，茶树生长健壮。建议继续加强日常管理，注意适时浇水施肥，预防病虫害发生。</text>
+          <view class="report-tags">
+            <text class="tag">✅ 健康度良好</text>
+            <text class="tag">💧 土壤湿润</text>
+            <text class="tag">🐛 无病虫害</text>
+          </view>
+        </view>
+        <view class="report-footer">
+          <text class="report-time">更新于 2026-06-01</text>
+        </view>
+      </view>
+
+      <!-- 连接状态 -->
+      <view class="connect-status">
+        <view class="status-dot"></view>
+        <text class="status-text">已连接</text>
+        <text class="status-more">展开 ›</text>
+      </view>
+
+    </view>
+
+    <!-- 底部占位 -->
+    <view class="safe-area-bottom"></view>
+  </scroll-view>
+</view>

@@ -1,0 +1,66 @@
+{
+  "pages": [
+    "miniprogram/index/index",
+    "miniprogram/chat/chat",
+    "miniprogram/diagnose/diagnose",
+    "miniprogram/map/map",
+    "miniprogram/garden/garden",
+    "miniprogram/profile/profile",
+    "miniprogram/detail/detail",
+    "miniprogram/history/history",
+    "miniprogram/favorites/favorites",
+    "miniprogram/quiz/quiz"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F5F0E8",
+    "navigationBarTitleText": "六堡茶AI助手",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F5F0E8",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#9E9E9E",
+    "selectedColor": "#5D4037",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "miniprogram/index/index",
+        "text": "首页",
+        "iconPath": "miniprogram/images/tab_home.png",
+        "selectedIconPath": "miniprogram/images/tab_home_active.png"
+      },
+      {
+        "pagePath": "miniprogram/chat/chat",
+        "text": "AI茶博士",
+        "iconPath": "miniprogram/images/tab_chat.png",
+        "selectedIconPath": "miniprogram/images/tab_chat_active.png"
+      },
+      {
+        "pagePath": "miniprogram/map/map",
+        "text": "地图",
+        "iconPath": "miniprogram/images/tab_map.png",
+        "selectedIconPath": "miniprogram/images/tab_map_active.png"
+      },
+      {
+        "pagePath": "miniprogram/profile/profile",
+        "text": "我的",
+        "iconPath": "miniprogram/images/tab_profile.png",
+        "selectedIconPath": "miniprogram/images/tab_profile_active.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于地图导览和茶园定位"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation"
+  ],
+  "style": "v2",
+  "sitemapLocation": "miniprogram/sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
