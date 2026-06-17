@@ -1,3 +1,5 @@
+/* pages/map/map.wxss */
+
 /* 地图导览页面样式 */
 .map-page {
   position: relative;
@@ -7,7 +9,7 @@
   overflow: hidden;
 }
 
-/* 自定义导航栏 —— 已下移 */
+/* 自定义导航栏 */
 .nav-bar {
   position: fixed;
   top: 0;
@@ -16,11 +18,11 @@
   height: 160rpx;
   background: linear-gradient(135deg, #F5F0E8 0%, #F5F0E8 100%);
   display: flex;
-  align-items: center;     
+  align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
-  padding-top: 60rpx;         
-  box-sizing: border-box;    
+  padding-top: 60rpx;
+  box-sizing: border-box;
   z-index: 100;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 }
@@ -32,8 +34,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.1);   
-  margin-top: 10rpx;    
+  background: rgba(0, 0, 0, 0.1);
+  margin-top: 10rpx;
 }
 
 .back-icon {
@@ -46,14 +48,13 @@
   font-size: 25rpx;
   color: #141313;
   letter-spacing: 5px;
+  font-weight: 500;
 }
 
 .nav-bar-right {
   width: 60rpx;
   height: 60rpx;
 }
-
-
 
 .relocate-btn {
   width: 60rpx;
@@ -69,68 +70,61 @@
   font-size: 32rpx;
 }
 
-/* 搜索栏 —— 跟随导航栏一起下移 */
-.search-bar {
+/* ====== 省份选择栏 ====== */
+.province-scroll-wrap {
   position: fixed;
-  top: 158rpx; /* 原来 88rpx → 现在 148rpx（下移 60rpx） */
+  top: 150rpx;
   left: 0;
   right: 0;
-  padding: 20rpx 32rpx;
-  background: #F5F0E8;
+  background: #FFFFFF;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #F0EDE8;
   z-index: 99;
-  display: flex;
-  gap: 20rpx;
+  height: 80rpx;
+  overflow: hidden;
   box-shadow: 0 2rpx 8rpx rgba(93, 64, 55, 0.05);
 }
 
-.search-input-wrap {
-  flex: 1;
-  background: #FFFFFF;
-  border-radius: 48rpx;
-  padding: 0 24rpx;
-  display: flex;
-  align-items: center;
+.province-scroll {
+  white-space: nowrap;
+  padding: 0 20rpx;
+  height: 100%;
+}
+
+.province-list {
+  display: inline-flex;
   gap: 16rpx;
-  box-shadow: 0 2rpx 8rpx rgba(93, 64, 55, 0.08);
-}
-
-.search-icon {
-  font-size: 32rpx;
-  color: #9E9E9E;
-}
-
-.search-input {
-  flex: 1;
-  height: 72rpx;
-  font-size: 28rpx;
-  color: #3E2723;
-}
-
-.clear-btn {
-  width: 40rpx;
-  height: 40rpx;
-  background: #E0E0E0;
-  border-radius: 50%;
-  display: flex;
+  padding: 4rpx 0;
+  height: 100%;
   align-items: center;
-  justify-content: center;
-  font-size: 24rpx;
-  color: #757575;
 }
 
-.search-btn {
-  background: #2E7D32;
+.province-item {
+  display: inline-block;
+  padding: 12rpx 32rpx;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  color: #8D6E63;
+  background: #F5F0E8;
+  transition: all 0.3s ease;
+  border: 2rpx solid transparent;
+  white-space: nowrap;
+}
+
+.province-item.active {
   color: #FFFFFF;
-  font-size: 28rpx;
-  padding: 0 32rpx;
-  height: 72rpx;
-  line-height: 72rpx;
-  border-radius: 48rpx;
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  border-color: #2E7D32;
   box-shadow: 0 4rpx 12rpx rgba(46, 125, 50, 0.3);
 }
 
-.search-btn::after {
-  border: none;
+.province-item:active {
+  transform: scale(0.95);
+}
+
+.province-name {
+  font-size: 26rpx;
+  font-weight: 500;
 }
 
 /* 地图容器 */
@@ -142,6 +136,7 @@
   bottom: 0;
   width: 100%;
   height: 100%;
+  z-index: 1;
 }
 
 /* 地图加载提示 */
