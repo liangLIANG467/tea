@@ -22,6 +22,12 @@ from article_service import (
     like_article, get_article_types, ARTICLE_TYPES
 )
 
+# 导入地图数据
+from map import PROVINCES, TEA_GARDENS
+
+# 导入题目数据
+from questions import LIUBAO_TEA_QUESTIONS, get_random_questions, check_answer
+
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -478,69 +484,81 @@ def delete_all_diagnose_images():
     except Exception as e:
         logger.error(f"清空图片失败: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
-    
 
-
-# ==================== 题目数据 ====================
-QUESTIONS_FILE = os.path.join(os.path.dirname(__file__), 'questions.json')
-
-def load_questions():
-    """加载题目数据"""
-    if os.path.exists(QUESTIONS_FILE):
-        with open(QUESTIONS_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            return data.get('questions', [])
-    return []
-
+# ==================== 题目数据API（从questions.py导入） ====================
 @app.route('/api/questions/random', methods=['GET'])
-def get_random_questions():
+def get_random_questions_api():
     """随机获取指定数量的题目"""
     count = int(request.args.get('count', 10))
-    questions = load_questions()
+    questions = get_random_questions(count)
     
-    if len(questions) == 0:
+    if not questions:
         return jsonify({'success': False, 'message': '暂无题目数据'}), 404
-    
-    # 随机抽取 count 道题
-    import random
-    selected = random.sample(questions, min(count, len(questions)))
-    
-    # 移除答案字段（前端只显示选项，提交时再验证）
-    for q in selected:
-        q_copy = {
-            'id': q['id'],
-            'question': q['question'],
-            'options': q['options'],
-            'explanation': q['explanation']
-        }
-        # 可选：返回答案用于前端验证
-        q_copy['answer'] = q['answer']
     
     return jsonify({
         'success': True,
-        'data': selected,
-        'total': len(selected)
+        'data': questions,
+        'total': len(questions)
     })
 
 @app.route('/api/questions/check', methods=['POST'])
-def check_answer():
+def check_answer_api():
     """检查答案是否正确"""
     data = request.json
     question_id = data.get('questionId')
     user_answer = data.get('answer')
     
-    questions = load_questions()
-    for q in questions:
-        if q['id'] == question_id:
-            is_correct = q['answer'] == user_answer
-            return jsonify({
-                'success': True,
-                'isCorrect': is_correct,
-                'correctAnswer': q['answer'],
-                'explanation': q['explanation']
-            })
+    result = check_answer(question_id, user_answer)
     
-    return jsonify({'success': False, 'message': '题目不存在'}), 404
+    if result is None:
+        return jsonify({'success': False, 'message': '题目不存在'}), 404
+    
+    return jsonify({
+        'success': True,
+        **result
+    })
+
+# ==================== 省份和茶园API（从map.py导入） ====================
+@app.route('/api/provinces', methods=['GET'])
+def get_provinces():
+    """获取所有省份列表"""
+    return jsonify({
+        'success': True,
+        'data': PROVINCES
+    })
+
+@app.route('/api/gardens/<province_id>', methods=['GET'])
+def get_gardens_by_province(province_id):
+    """根据省份ID获取茶园列表"""
+    province_data = TEA_GARDENS.get(province_id)
+    
+    if not province_data:
+        return jsonify({
+            'success': False,
+            'message': '省份不存在'
+        }), 404
+    
+    return jsonify({
+        'success': True,
+        'data': province_data
+    })
+
+@app.route('/api/garden/<int:garden_id>', methods=['GET'])
+def get_garden_detail(garden_id):
+    """获取茶园详情"""
+    for province_id, province_data in TEA_GARDENS.items():
+        for garden in province_data['gardens']:
+            if garden['id'] == garden_id:
+                garden['province'] = province_data['province']
+                return jsonify({
+                    'success': True,
+                    'data': garden
+                })
+    
+    return jsonify({
+        'success': False,
+        'message': '茶园不存在'
+    }), 404
 
 # ==================== 启动应用 ====================
 if __name__ == '__main__':
@@ -564,6 +582,8 @@ if __name__ == '__main__':
     ║     - Ollama AI对话助手 (deepseek-r1:1.5b)                       ║
     ║     - 文章知识库（模块化）                                        ║
     ║     - 病害数据（模块化）                                          ║
+    ║     - 地图数据（模块化）                                          ║
+    ║     - 题目数据（模块化）                                          ║
     ║     - 统一数据源: images文件夹                                    ║
     ║                                                                  ║
     ║     API地址: http://localhost:5000                               ║
