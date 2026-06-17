@@ -17,24 +17,21 @@
     </view>
   </view>
 
-  <!-- 搜索栏 -->
-  <view class="search-bar">
-    <view class="search-input-wrap">
-      <text class="search-icon">🔍</text>
-      <input 
-        class="search-input" 
-        type="text" 
-        placeholder="搜索茶园、景点..." 
-        value="{{searchKeyword}}"
-        bindinput="onSearchInput"
-        confirm-type="search"
-        bindconfirm="doSearch"
-      />
-      <view wx:if="{{searchKeyword}}" class="clear-btn" bindtap="clearSearch">
-        <text>✕</text>
+  <!-- 省份选择栏 -->
+  <view class="province-scroll-wrap">
+    <scroll-view class="province-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+      <view class="province-list">
+        <view 
+          wx:for="{{provinces}}" 
+          wx:key="id"
+          class="province-item {{currentProvince === item.id ? 'active' : ''}}"
+          bindtap="selectProvince"
+          data-id="{{item.id}}"
+        >
+          <text class="province-name">{{item.name}}</text>
+        </view>
       </view>
-    </view>
-    <button class="search-btn" bindtap="doSearch">搜索</button>
+    </scroll-view>
   </view>
 
   <!-- 地图组件 -->
@@ -64,7 +61,7 @@
   <!-- 底部地点列表 -->
   <view class="places-list">
     <view class="places-header">
-      <text class="places-title">附近茶园</text>
+      <text class="places-title">{{currentProvinceName}}茶园</text>
       <text class="places-count">{{places.length}}个地点</text>
     </view>
     <scroll-view class="places-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
@@ -76,7 +73,7 @@
           bindtap="selectPlace"
           data-id="{{item.id}}"
         >
-          <view class="place-icon">{{item.icon}}</view>
+          <view class="place-icon">{{item.icon || '📍'}}</view>
           <view class="place-info">
             <text class="place-name">{{item.name}}</text>
             <text class="place-distance">{{item.distance}}</text>
@@ -92,7 +89,7 @@
       <!-- 卡片头部 -->
       <view class="card-header">
         <view class="card-header-left">
-          <text class="card-icon">{{selectedPlace.icon}}</text>
+          <text class="card-icon">{{selectedPlace.icon || '📍'}}</text>
           <text class="card-title">{{selectedPlace.name}}</text>
         </view>
         <view class="card-close" bindtap="hideInfoCard">
