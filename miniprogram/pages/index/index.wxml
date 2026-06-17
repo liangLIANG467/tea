@@ -39,8 +39,8 @@
       <text class="item-title">病害识别</text>
     </view>
     <view class="grid-item" bindtap="navigateToGarden">
-      <view class="item-icon">🌱</view>
-      <text class="item-title">我的茶园</text>
+      <view class="item-icon">📚</view>
+      <text class="item-title">六堡茶百科</text>
     </view>
   </view>
 
@@ -49,7 +49,7 @@
 <view class="knowledge-card">
   <view class="knowledge-header">
     <view class="knowledge-title">
-      <text class="title-icon">📖</text>
+      <text class="title-icon">🍵</text>
       <text>今日茶知识</text>
     </view>
     <view class="knowledge-actions">
