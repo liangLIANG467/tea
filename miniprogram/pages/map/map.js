@@ -3,116 +3,146 @@
  * 六堡茶AI智能助手
  */
 
+const api = require('../../utils/api.js');
+
 Page({
-  /**
-   * 页面的初始数据
-   */
   data: {
-    // 地图中心坐标（广西苍梧县六堡镇）
+    provinces: [],
+    currentProvince: 'guangxi',
+    currentProvinceName: '广西',
     centerLatitude: 23.5985,
     centerLongitude: 111.4228,
-    // 缩放级别
     scale: 12,
-    // 标记点列表
     markers: [],
-    // 当前选中的地点
     selectedPlace: null,
-    // 是否显示底部信息卡
     showInfoCard: false,
-    // 搜索关键词
-    searchKeyword: '',
-    // 地点列表
-    places: [
-      {
-        id: 1,
-        name: '六堡镇',
-        latitude: 23.5985,
-        longitude: 111.4228,
-        distance: '0km',
-        description: '六堡茶的发源地，中国黑茶的重要产区。六堡镇气候温和，雨量充沛，土壤肥沃，非常适合茶树生长。',
-        features: ['茶文化发源地', '千年古茶树', '六堡茶集散地'],
-        icon: '🏘️',
-        address: '广西壮族自治区梧州市苍梧县六堡镇',
-        openingHours: '全天开放',
-        phone: ''
-      },
-      {
-        id: 2,
-        name: '苍梧茶园',
-        latitude: 23.6123,
-        longitude: 111.4356,
-        distance: '2.5km',
-        description: '现代化生态茶园，采用有机种植方式。茶园面积超过3000亩，年产优质六堡茶50吨。',
-        features: ['有机茶园', '生态示范', '观光体验'],
-        icon: '🌱',
-        address: '广西壮族自治区梧州市苍梧县六堡镇苍梧茶园',
-        openingHours: '08:00-18:00',
-        phone: '0774-1234567'
-      },
-      {
-        id: 3,
-        name: '茶博园',
-        latitude: 23.5856,
-        longitude: 111.4089,
-        distance: '3.8km',
-        description: '六堡茶文化博物馆和体验中心，展示六堡茶的历史文化、制作工艺，可以体验采茶和制茶。',
-        features: ['茶文化展示', '制茶体验', '品茗休闲'],
-        icon: '🏛️',
-        address: '广西壮族自治区梧州市苍梧县六堡镇茶博园',
-        openingHours: '09:00-17:00',
-        phone: '0774-7654321'
-      }
-    ],
-    // 是否正在加载
+    places: [],
     isLoading: false,
-    // 用户位置
     userLatitude: null,
     userLongitude: null,
-    // 是否获得位置权限
     hasLocationAuth: false
   },
 
-  /**
-   * 生命周期函数 - 监听页面加载
-   */
   onLoad: function(options) {
-    // 检查位置权限
+    this.loadProvinces();
     this.checkLocationAuth();
-    // 初始化标记点
-    this.initMarkers();
-    // 获取用户位置
     this.getUserLocation();
   },
 
-  /**
-   * 生命周期函数 - 监听页面显示
-   */
   onShow: function() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        selected: 2
-      });
+      this.getTabBar().setData({ selected: 2 });
     }
   },
 
   /**
-   * 检查位置权限
+   * 加载省份列表
    */
-  checkLocationAuth: function() {
-    wx.getSetting({
+  loadProvinces: function() {
+    const BASE_URL = api.BASE_URL || 'http://172.18.106.153:5000';
+    
+    const defaultProvinces = [
+      { id: 'guangxi', name: '广西' },
+      { id: 'yunnan', name: '云南' },
+      { id: 'fujian', name: '福建' },
+      { id: 'zhejiang', name: '浙江' },
+      { id: 'anhui', name: '安徽' },
+      { id: 'sichuan', name: '四川' },
+      { id: 'guizhou', name: '贵州' },
+      { id: 'hunan', name: '湖南' },
+      { id: 'jiangsu', name: '江苏' },
+      { id: 'henan', name: '河南' }
+    ];
+    
+    this.setData({ 
+      provinces: defaultProvinces,
+      currentProvince: 'guangxi',
+      currentProvinceName: '广西'
+    });
+    
+    this.loadGardensByProvince('guangxi');
+    
+    wx.request({
+      url: `${BASE_URL}/api/provinces`,
+      method: 'GET',
       success: (res) => {
-        if (res.authSetting['scope.userLocation']) {
-          this.setData({ hasLocationAuth: true });
+        if (res.data && res.data.success && res.data.data.length > 0) {
+          this.setData({ provinces: res.data.data });
         }
+      },
+      fail: (err) => {
+        console.error('加载省份失败，使用默认数据');
       }
     });
+  },
+
+  /**
+   * 根据省份加载茶园数据
+   */
+  loadGardensByProvince: function(provinceId) {
+    const BASE_URL = api.BASE_URL || 'http://172.18.106.153:5000';
+    
+    this.setData({ isLoading: true });
+    
+    wx.request({
+      url: `${BASE_URL}/api/gardens/${provinceId}`,
+      method: 'GET',
+      success: (res) => {
+        console.log('茶园数据返回:', res.data);
+        if (res.data && res.data.success) {
+          const data = res.data.data;
+          const places = data.gardens.map(garden => ({
+            ...garden,
+            distance: garden.distance || '0km'
+          }));
+          
+          console.log('解析后的地点数据:', places);
+          
+          this.setData({
+            places: places,
+            centerLatitude: data.center.latitude,
+            centerLongitude: data.center.longitude,
+            currentProvinceName: data.province,
+            isLoading: false
+          });
+          
+          this.initMarkers();
+          this.calculateDistances();
+        }
+      },
+      fail: (err) => {
+        console.error('加载茶园数据失败', err);
+        this.setData({ isLoading: false });
+        wx.showToast({ title: '加载失败', icon: 'error' });
+      }
+    });
+  },
+
+  /**
+   * 选择省份
+   */
+  selectProvince: function(e) {
+    const id = e.currentTarget.dataset.id;
+    const province = this.data.provinces.find(p => p.id === id);
+    
+    if (province) {
+      this.setData({
+        currentProvince: id,
+        currentProvinceName: province.name,
+        showInfoCard: false,
+        selectedPlace: null
+      });
+      
+      this.loadGardensByProvince(id);
+    }
   },
 
   /**
    * 初始化地图标记点
    */
   initMarkers: function() {
-    const markers = this.data.places.map((place, index) => ({
+    const places = this.data.places || [];
+    const markers = places.map((place, index) => ({
       id: place.id,
       latitude: place.latitude,
       longitude: place.longitude,
@@ -127,20 +157,43 @@ Page({
         padding: 10,
         bgColor: '#FFFFFF',
         display: 'ALWAYS'
-      },
-      label: {
-        content: place.name,
-        color: '#5D4037',
-        fontSize: 12,
-        borderRadius: 8,
-        bgColor: '#FFFFFF',
-        padding: 6,
-        anchorX: 0,
-        anchorY: -20
       }
     }));
     
+    // 添加用户位置标记
+    if (this.data.userLatitude && this.data.userLongitude) {
+      markers.push({
+        id: 999,
+        latitude: this.data.userLatitude,
+        longitude: this.data.userLongitude,
+        width: 30,
+        height: 30,
+        callout: {
+          content: '📍 我的位置',
+          color: '#2E7D32',
+          fontSize: 12,
+          borderRadius: 8,
+          padding: 6,
+          bgColor: '#FFFFFF',
+          display: 'ALWAYS'
+        }
+      });
+    }
+    
     this.setData({ markers });
+  },
+
+  /**
+   * 检查位置权限
+   */
+  checkLocationAuth: function() {
+    wx.getSetting({
+      success: (res) => {
+        if (res.authSetting['scope.userLocation']) {
+          this.setData({ hasLocationAuth: true });
+        }
+      }
+    });
   },
 
   /**
@@ -159,9 +212,7 @@ Page({
           hasLocationAuth: true,
           isLoading: false
         });
-        // 计算各地点距离
         this.calculateDistances();
-        // 添加用户位置标记
         this.addUserMarker(res.latitude, res.longitude);
       },
       fail: (err) => {
@@ -180,10 +231,7 @@ Page({
             }
           });
         } else {
-          wx.showToast({
-            title: '获取位置失败',
-            icon: 'none'
-          });
+          wx.showToast({ title: '获取位置失败', icon: 'none' });
         }
       }
     });
@@ -200,7 +248,7 @@ Page({
       width: 30,
       height: 30,
       callout: {
-        content: '我的位置',
+        content: '📍 我的位置',
         color: '#2E7D32',
         fontSize: 12,
         borderRadius: 8,
@@ -233,7 +281,6 @@ Page({
       };
     });
     
-    // 按距离排序
     places.sort((a, b) => {
       const distA = parseFloat(a.distance) || Infinity;
       const distB = parseFloat(b.distance) || Infinity;
@@ -271,66 +318,10 @@ Page({
   },
 
   /**
-   * 监听搜索输入
-   */
-  onSearchInput: function(e) {
-    this.setData({
-      searchKeyword: e.detail.value
-    });
-  },
-
-  /**
-   * 清除搜索
-   */
-  clearSearch: function() {
-    this.setData({
-      searchKeyword: '',
-      showInfoCard: false,
-      selectedPlace: null
-    });
-  },
-
-  /**
-   * 执行搜索
-   */
-  doSearch: function() {
-    const keyword = this.data.searchKeyword.trim();
-    if (!keyword) {
-      wx.showToast({
-        title: '请输入搜索关键词',
-        icon: 'none'
-      });
-      return;
-    }
-    
-    // 在地点列表中搜索
-    const found = this.data.places.find(place => 
-      place.name.includes(keyword) || 
-      place.description.includes(keyword) ||
-      place.features.some(f => f.includes(keyword))
-    );
-    
-    if (found) {
-      this.setData({
-        centerLatitude: found.latitude,
-        centerLongitude: found.longitude,
-        scale: 14
-      });
-      this.showPlaceInfo(found);
-    } else {
-      wx.showToast({
-        title: '未找到相关地点',
-        icon: 'none'
-      });
-    }
-  },
-
-  /**
    * 点击标记点
    */
   onMarkerTap: function(e) {
     const markerId = e.detail.markerId;
-    // 跳过用户位置标记
     if (markerId === 999) return;
     
     const place = this.data.places.find(p => p.id === markerId);
@@ -434,29 +425,19 @@ Page({
         showInfoCard: false,
         selectedPlace: null
       });
-      wx.showToast({
-        title: '已定位到您的位置',
-        icon: 'success',
-        duration: 1500
-      });
+      wx.showToast({ title: '已定位到您的位置', icon: 'success', duration: 1500 });
     } else {
       this.getUserLocation();
     }
   },
 
-  /**
-   * 分享
-   */
   onShareAppMessage: function() {
     return {
       title: '六堡茶茶园地图导览',
-      path: '/miniprogram/pages/map/map'
+      path: '/pages/map/map'
     };
   },
 
-  /**
-   * 返回上一页
-   */
   navigateBack: function() {
     wx.navigateBack();
   }
